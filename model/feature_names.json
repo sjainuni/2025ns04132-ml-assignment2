@@ -1,0 +1,18 @@
+[
+  "lead_time",
+  "country",
+  "booking_changes",
+  "deposit_type",
+  "agent",
+  "customer_type",
+  "adr",
+  "required_car_parking_spaces",
+  "total_of_special_requests",
+  "room_was_changed",
+  "total_stay_nights",
+  "arrival_date_month_encoded",
+  "arrival_year_month",
+  "weekend_ratio",
+  "total_guests",
+  "guest_cancel_rate"
+]

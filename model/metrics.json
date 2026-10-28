@@ -1,0 +1,103 @@
+{
+  "files": {
+    "Logistic Regression": "logistic_regression.pkl",
+    "Decision Tree": "decision_tree.pkl",
+    "kNN": "knn.pkl",
+    "Naive Bayes": "naive_bayes.pkl",
+    "SVM": "svm.pkl"
+  },
+  "metrics": {
+    "Logistic Regression": {
+      "Accuracy": 0.7683,
+      "AUC": 0.848,
+      "Precision": 0.6842,
+      "Recall": 0.7022,
+      "F1": 0.6931,
+      "MCC": 0.5072
+    },
+    "Decision Tree": {
+      "Accuracy": 0.8516,
+      "AUC": 0.9283,
+      "Precision": 0.8234,
+      "Recall": 0.7658,
+      "F1": 0.7936,
+      "MCC": 0.679
+    },
+    "kNN": {
+      "Accuracy": 0.8492,
+      "AUC": 0.9331,
+      "Precision": 0.778,
+      "Recall": 0.8331,
+      "F1": 0.8046,
+      "MCC": 0.6832
+    },
+    "Naive Bayes": {
+      "Accuracy": 0.7513,
+      "AUC": 0.8323,
+      "Precision": 0.6482,
+      "Recall": 0.7269,
+      "F1": 0.6853,
+      "MCC": 0.4829
+    },
+    "SVM": {
+      "Accuracy": 0.8263,
+      "AUC": 0.8994,
+      "Precision": 0.7581,
+      "Recall": 0.7839,
+      "F1": 0.7708,
+      "MCC": 0.6312
+    }
+  },
+  "confusion_matrices": {
+    "Decision Tree": [
+      [
+        13426,
+        1451
+      ],
+      [
+        2069,
+        6766
+      ]
+    ],
+    "Logistic Regression": [
+      [
+        12014,
+        2863
+      ],
+      [
+        2631,
+        6204
+      ]
+    ],
+    "kNN": [
+      [
+        12777,
+        2100
+      ],
+      [
+        1475,
+        7360
+      ]
+    ],
+    "Naive Bayes": [
+      [
+        11392,
+        3485
+      ],
+      [
+        2413,
+        6422
+      ]
+    ],
+    "SVM": [
+      [
+        12667,
+        2210
+      ],
+      [
+        1909,
+        6926
+      ]
+    ]
+  }
+}
