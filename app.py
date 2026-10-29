@@ -1,6 +1,6 @@
 """Hotel Booking Cancellation - model demonstration app (Streamlit).
 
-Loads the five classifiers trained in model/Group-44.ipynb, scores an uploaded
+Loads the five classifiers trained in model/2025NS04132.ipynb, scores an uploaded
 test CSV (or the bundled test_data.csv) and shows metrics, confusion matrix,
 classification report, ROC curves and a per-booking inspector.
 """
@@ -315,7 +315,7 @@ with tab_about:
              "0 = kept, 1 = cancelled) so that revenue managers can act on high-risk reservations.")
     st.subheader("Dataset")
     st.write("Hotel Booking Demand data (Kaggle): 119,390 bookings and 32 columns for a city hotel and a resort "
-             "hotel in Portugal. After cleaning, 118,560 bookings and 16 RFE-selected features remain. The test "
+             "hotel (arrivals 2015-2017). After cleaning, 118,560 bookings and 16 RFE-selected features remain. The test "
              "set holds 23,712 bookings that no model saw during training or tuning.")
     st.subheader("The 16 model features")
     st.write(", ".join(f"`{f}`" for f in FEATURES))
