@@ -1,6 +1,6 @@
 # Hotel Booking Cancellation Prediction
 
-**Machine Learning, Assignment 2 (M.Tech DSE, BITS WILP)** · **Name: Sandeep Kumar Jain** · **BITS ID: 2025NS04132** · **Group 44**
+**Machine Learning, Assignment 2** · **Name: Sandeep Kumar Jain** · **BITS ID: 2025NS04132**
 
 | | |
 |---|---|
