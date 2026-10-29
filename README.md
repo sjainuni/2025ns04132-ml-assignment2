@@ -29,16 +29,16 @@ It is a **binary classification** problem. The positive class is *Cancelled*, so
 
 1. Removed the leakage columns `reservation_status` and `reservation_status_date`, and the sparse `company` column (94% missing).
 2. Imputed `children` and `agent` with 0 and `country` with the most frequent value.
-3. Removed impossible records (negative or extreme ADR, bookings with no guests) and outliers (lead time above 730 days, zero-night stays). **118,560 rows remain.**
+3. Removed impossible records (negative or extreme ADR, bookings with no guests) and outliers (lead time above 730 days, zero-night stays). **118,340 rows remain.**
 4. Label-encoded the categorical columns and engineered new features (`total_stay_nights`, `weekend_ratio`, `total_guests`, `room_was_changed`, `guest_cancel_rate`, …).
-5. Stratified 80/20 split (`random_state=42`): 94,848 training rows and **23,712 test rows**.
-6. **SMOTE on the training set only** to balance the classes (119,018 rows after).
+5. Stratified 80/20 split (`random_state=42`): 94,672 training rows and **23,668 test rows**.
+6. **SMOTE on the training set only** to balance the classes (118,798 rows after).
 7. **RFE** (Recursive Feature Elimination) reduced the 27 features to the **16 features** used by every model.
 8. `StandardScaler` (inside a pipeline, fitted on training data only) for Logistic Regression, kNN and SVM.
 
 **Features used by the models (16):** `lead_time`, `country`, `booking_changes`, `deposit_type`, `agent`, `customer_type`, `adr`, `required_car_parking_spaces`, `total_of_special_requests`, `room_was_changed`, `total_stay_nights`, `arrival_date_month_encoded`, `arrival_year_month`, `weekend_ratio`, `total_guests`, `guest_cancel_rate`.
 
-`test_data.csv` is the **23,712-row hold-out set** (16 features + `is_canceled`) that no model saw during training or tuning. It is already cleaned and encoded, so the app can score it directly.
+`test_data.csv` is the **23,668-row hold-out set** (16 features + `is_canceled`) that no model saw during training or tuning. It is already cleaned and encoded, so the app can score it directly.
 
 ## c. GitHub repository link
 
@@ -49,7 +49,7 @@ It is a **binary classification** problem. The positive class is *Cancelled*, so
 │-- app.py                  Streamlit app (model demonstration)
 │-- requirements.txt        Python dependencies
 │-- README.md               This file
-│-- test_data.csv           Held-out test data (23,712 rows) used by the app
+│-- test_data.csv           Held-out test data (23,668 rows) used by the app
 │-- data/
 │   └-- hotel_bookings.csv  Original dataset
 └-- model/
@@ -74,31 +74,31 @@ To re-train, open `model/2025NS04132.ipynb` and run all cells (about 5 minutes; 
 
 ## d. Models used
 
-All five models were trained on the **same** SMOTE-balanced training set with the **same** 16 features, tuned with cross-validated grid search (ROC-AUC), and evaluated on the **same** untouched test set of **23,712 bookings**. Precision, Recall and F1 are for the positive class (*Cancelled*).
+All five models were trained on the **same** SMOTE-balanced training set with the **same** 16 features, tuned with cross-validated grid search (ROC-AUC), and evaluated on the **same** untouched test set of **23,668 bookings**. Precision, Recall and F1 are for the positive class (*Cancelled*).
 
 ### Comparison table
 
 | ML Model Name | Accuracy | AUC | Precision | Recall | F1 | MCC |
 |---|---|---|---|---|---|---|
-| Logistic Regression | 0.7683 | 0.8480 | 0.6842 | 0.7022 | 0.6931 | 0.5072 |
-| Decision Tree | **0.8516** | 0.9283 | **0.8234** | 0.7658 | 0.7936 | 0.6790 |
-| kNN | 0.8492 | **0.9331** | 0.7780 | **0.8332** | **0.8046** | **0.6832** |
-| Naive Bayes | 0.7513 | 0.8323 | 0.6482 | 0.7269 | 0.6853 | 0.4829 |
-| Support Vector Machine | 0.8263 | 0.8994 | 0.7581 | 0.7839 | 0.7708 | 0.6312 |
+| Logistic Regression | 0.7688 | 0.8494 | 0.6847 | 0.7034 | 0.6939 | 0.5083 |
+| Decision Tree | **0.8495** | 0.9284 | **0.8081** | 0.7818 | 0.7947 | 0.6763 |
+| kNN | 0.8483 | **0.9339** | 0.7757 | **0.8340** | **0.8038** | **0.6816** |
+| Naive Bayes | 0.7533 | 0.8349 | 0.6507 | 0.7292 | 0.6877 | 0.4870 |
+| Support Vector Machine | 0.8263 | 0.8981 | 0.7591 | 0.7820 | 0.7704 | 0.6310 |
 
 *(Best value per metric in bold. Source: `model/metrics.json`, produced by the notebook.)*
 
-Settings chosen by cross-validation: Logistic Regression `C=100`; Decision Tree `max_depth=12`, `min_samples_leaf=15`, `min_samples_split=60`, entropy criterion, balanced class weights; kNN `k=21` with distance weighting; Gaussian Naive Bayes `var_smoothing=1e-7`; SVM with RBF kernel, `C=10`, `gamma='scale'`, trained on a stratified 20,000-row sample of the training set.
+Settings chosen by cross-validation: Logistic Regression `C=100`; Decision Tree `max_depth=12`, `min_samples_leaf=15`, `min_samples_split=60`, entropy criterion, balanced class weights; kNN `k=31` with distance weighting; Gaussian Naive Bayes `var_smoothing=1e-07`; SVM with RBF kernel, `C=5`, `gamma='scale'`, trained on a stratified 20,000-row sample of the training set.
 
 ### Observations on model performance
 
 | ML Model Name | Observation about model performance |
 |---|---|
-| Logistic Regression | Accuracy 0.768 and AUC 0.848, clearly below the three stronger models. Its cross-validated AUC was identical (≈ 0.862) for every value of `C`, so regularisation was not the issue: the linear boundary and the arbitrary numeric codes of label-encoded features (`deposit_type`, `country`, `agent`) limit it. Its coefficients are still informative: parking spaces, room changes and special requests lower the cancellation risk, while a history of cancellations raises it. |
-| Decision Tree | The best on **Accuracy (0.852)** and **Precision (0.823)**: when it flags a cancellation it is right 82% of the time, and it makes the fewest false alarms (1,451). It misses more cancellations than kNN (recall 0.766). It is tiny (about 19 KB), instant and explainable as rules. `deposit_type`, `agent` and `country` are its most important features. |
-| kNN | The best on **AUC (0.933), Recall (0.833), F1 (0.805) and MCC (0.683)**, and it misses the fewest cancellations (1,474 of 8,835). Bookings that resemble past ones tend to behave alike. Costs: it stores the whole training set and is slower to predict. About 27% of the dataset's rows are exact duplicates, which helps a memory-based model like kNN. |
-| Naive Bayes | The weakest model (accuracy 0.751, MCC 0.483). Its two assumptions fail here: the features are correlated, and several are skewed or arbitrary codes rather than bell-shaped. About 1 in 3 of its cancellation alerts is a false alarm. It is very fast but not suitable for this dataset. |
-| Support Vector Machine | Third overall (accuracy 0.826, AUC 0.899, MCC 0.631), clearly ahead of Logistic Regression and Naive Bayes thanks to the RBF kernel. It was trained on only 20,000 of the 119,018 training rows (training took about 2 minutes), which probably holds it back. It is the slowest model to train and to predict. |
+| Logistic Regression | Accuracy 0.769 and AUC 0.849, clearly below the three stronger models. Its cross-validated AUC was identical (≈ 0.862) for every value of `C`, so regularisation was not the issue: the linear boundary and the arbitrary numeric codes of label-encoded features (`deposit_type`, `country`, `agent`) limit it. Its coefficients are still informative: parking spaces, room changes and special requests lower the cancellation risk, while a history of cancellations raises it. |
+| Decision Tree | The best on **Accuracy (0.850)** and **Precision (0.808)**: when it flags a cancellation it is right 81% of the time, and it makes the fewest false alarms (1,637). It misses more cancellations than kNN (recall 0.782). It is tiny (about 19 KB), instant and explainable as rules. `deposit_type`, `agent` and `country` are its most important features. |
+| kNN | The best on **AUC (0.934), Recall (0.834), F1 (0.804) and MCC (0.682)**, and it misses the fewest cancellations (1,464 of 8,818). Bookings that resemble past ones tend to behave alike. Costs: it stores the whole training set and is slower to predict. About 27% of the dataset's rows are exact duplicates, which helps a memory-based model like kNN. |
+| Naive Bayes | The weakest model (accuracy 0.753, MCC 0.487). Its two assumptions fail here: the features are correlated, and several are skewed or arbitrary codes rather than bell-shaped. About 1 in 3 of its cancellation alerts is a false alarm. It is very fast but not suitable for this dataset. |
+| Support Vector Machine | Third overall (accuracy 0.826, AUC 0.898, MCC 0.631), clearly ahead of Logistic Regression and Naive Bayes thanks to the RBF kernel. It was trained on only 20,000 of the 118,798 training rows (training took 23 seconds in our run), which probably holds it back. It is the slowest model to train and to predict. |
 | **Overall, winner for your dataset?** | **kNN.** It has the best average rank across the six metrics (1.33, against 1.83 for the Decision Tree) and wins on AUC, Recall, F1 and MCC, the metrics that matter when a missed cancellation costs revenue. The Decision Tree is a very close second (best accuracy and precision) and is the better choice when speed, size or explainability matter. |
 
 ### Limitations

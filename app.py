@@ -19,6 +19,7 @@ from sklearn.metrics import (accuracy_score, classification_report, confusion_ma
 BASE = Path(__file__).parent
 MODEL_DIR = BASE / "model"
 TARGET = "is_canceled"
+BUNDLED_ROWS = sum(1 for _ in open(BASE / "test_data.csv")) - 1   # rows in the bundled test set
 LABELS = ["Not Cancelled", "Cancelled"]
 METRIC_NAMES = ["Accuracy", "AUC", "Precision", "Recall", "F1", "MCC"]
 
@@ -110,7 +111,7 @@ with st.sidebar:
     uploaded = st.file_uploader("Upload test data (CSV)", type="csv",
                                 help="Use only test data. The CSV needs the 16 feature columns "
                                      f"and, for metrics, the `{TARGET}` column.")
-    st.caption("No file? The bundled `test_data.csv` (23,712 held-out bookings) is used.")
+    st.caption(f"No file? The bundled `test_data.csv` ({BUNDLED_ROWS:,} held-out bookings) is used.")
     model_name = st.selectbox("Choose a model", list(models),
                               format_func=lambda m: f"{MODEL_INFO[m][0]}  {m}")
     st.caption(MODEL_INFO[model_name][1])
@@ -315,8 +316,8 @@ with tab_about:
              "0 = kept, 1 = cancelled) so that revenue managers can act on high-risk reservations.")
     st.subheader("Dataset")
     st.write("Hotel Booking Demand data (Kaggle): 119,390 bookings and 32 columns for a city hotel and a resort "
-             "hotel (arrivals 2015-2017). After cleaning, 118,560 bookings and 16 RFE-selected features remain. The test "
-             "set holds 23,712 bookings that no model saw during training or tuning.")
+             "hotel (arrivals 2015-2017). After cleaning, 118,340 bookings and 16 RFE-selected features remain. The test "
+             f"set holds {BUNDLED_ROWS:,} bookings that no model saw during training or tuning.")
     st.subheader("The 16 model features")
     st.write(", ".join(f"`{f}`" for f in FEATURES))
     st.subheader("Models")
